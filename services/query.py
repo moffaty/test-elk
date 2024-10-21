@@ -9,7 +9,7 @@ class RandomQuery:
     def __init__(self, mapping: dict[str, str]) -> None:
         self.__fake_generator = Faker(['ru_RU', 'en_US'])
         self.__mapping: dict[str, str] = mapping
-        self.id = 1
+        self.id = 0
 
     def generate_value(self, field_type: str) -> Union[str, bool, int, None]:
         generation_methods = {
@@ -21,7 +21,8 @@ class RandomQuery:
         return generation_methods.get(field_type, lambda: None)()
     
     def get_id(self) -> int:
-        return ++self.id
+        self.id += 1
+        return self.id
 
     def generate_int(self) -> str:
         return self.__fake_generator.random_int(min=0, max=100)

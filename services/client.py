@@ -28,9 +28,16 @@ class Client:
         self.index_delete(index_name)
         self.index_create(index_name)
 
-    def doc_add(self, index_name: Optional[str] = ES.INDEX.NAME, data: Optional[Dict[str, str]] = {}) -> None:
-        if data == {}: data = self.query.generate_document(index_name)
-        fs.create_doc(index_name, data)
+    def doc_add(self, index_name: Optional[str] = ES.INDEX.NAME, data: Optional[Dict[str, str]] = None, create_file: Optional[bool] = False) -> None:
+        if data is None:
+            data = self.query.generate_document(index_name)
+
+        if create_file: 
+            fs.create_doc(index_name, data)
+
+        if 'id' not in data:
+            raise ValueError("Missing 'id' in data")
+
         self.es.index(index=index_name, id=data['id'], body=data)
 
     def doc_count(self, index_name: Optional[str] = ES.INDEX.NAME) -> int:
@@ -62,33 +69,5 @@ class Client:
     def anylize(self, index_name: Optional[str] = ES.INDEX.NAME, body: Optional[dict[str, str]] = {}) -> dict[str, str]: 
         return self.es.indices.analyze(index=index_name, body=body)
     
-    def format_output(self, response: object) -> None:
-        print(json.dumps(response, ensure_ascii=False, indent=4))
-
-    def upload_test_data(self):
-        test_data = fs.get_dir('test')
-        for data in test_data:
-            self.doc_add(ES.INDEX.NAME, data)
-
-    def test_queries(self):
-        test_cases = {
-            "око": ["1f9d0af1-a702-41bd-82d0-b7c3826f78be"],
-            # добавь другие запросы и соответствующие id
-        } 
-        results = {}
-    
-        for query, relevant_ids in test_cases.items():
-            response = self.es.search(index=ES.INDEX.NAME, body={
-                "query": {
-                    "match": {
-                        "title": query
-                    }
-                }
-            })
-            
-            found_ids = [hit['_id'] for hit in response['hits']['hits']]
-            results[query] = {
-                "relevant": relevant_ids,
-                "found": found_ids
-            }
-        return results
+    def format_output(self, response: object, indent: Optional[int] = 4) -> None:
+        print(json.dumps(response, ensure_ascii=False, indent=indent))
