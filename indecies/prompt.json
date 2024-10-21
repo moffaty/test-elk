@@ -260,7 +260,7 @@
                 "ngram_tokenizer": {
                     "type": "ngram",
                     "min_gram": 3,
-                    "max_gram": 3,
+                    "max_gram": 5,
                     "token_chars": ["letter", "digit"]
                 },
                 "edge_tokenizer": {
