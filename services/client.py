@@ -49,12 +49,12 @@ class Client:
         fs.delete_docs(index_name)
         return int(result['deleted'])
     
-    def search_simple(self, search_text: str, index_name: Optional[str] = ES.INDEX.NAME) -> list:
+    def search_simple(self, search_text: str, index_name: Optional[str] = ES.INDEX.NAME, fields: Optional[list] = ["title", "description", "template"]) -> list:
         query = {
             "query": {
                 "multi_match": {
                     "query": search_text,
-                    "fields": ["title^2", "description"],
+                    "fields": fields,
                     "fuzziness": "AUTO",
                     "operator": "or"
                 }
