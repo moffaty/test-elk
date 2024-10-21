@@ -10,6 +10,6 @@ class Mapping(BaseModel):
             str: 'text',
             bool: 'boolean',
             int: 'int',
-            UUID: 'uuid'
+            UUID: 'id'
         }
         return {field: type_mapping.get(field_type, 'unknown') for field, field_type in self.params.items()}

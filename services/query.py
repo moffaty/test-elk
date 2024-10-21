@@ -4,7 +4,7 @@ import json
 from typing import Union, Dict
 from faker import Faker
 from config import ES
-from mapping import Mapping
+from services.mapping import Mapping
 
 class RandomQuery:
     def __init__(self, mapping: dict[str, str]) -> None:
@@ -13,7 +13,7 @@ class RandomQuery:
 
     def generate_value(self, field_type: str) -> Union[str, bool, int, None]:
         generation_methods = {
-            'uuid': self.generate_uuid,
+            'id': self.generate_uuid,
             'text': self.generate_text,
             'boolean': self.__fake_generator.boolean,
             'int': self.generate_int,
@@ -34,7 +34,5 @@ class RandomQuery:
         document = {}
         for field, field_type in self.__mapping.items():
             document[field] = self.generate_value(field_type)
-        return [
-            {"index": {"_index": index_name}},  # Операция index
-            document  # Сам документ
-        ]
+        return document  
+        
