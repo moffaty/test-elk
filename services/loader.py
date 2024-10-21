@@ -13,11 +13,14 @@ class IndexLoader:
             self.__search.indices.create(index=index_name, body=body)
 
     def delete_index(self, index_name: str) -> None:
-        if self.__search.indices.exists(index_name):
-            self.__search.indices.delete(index_name)
+        if self.__search.indices.exists(index=index_name):
+            self.__search.indices.delete(index=index_name)
 
     def upload_index_data(self, data: list[dict[str, Any]]) -> None:
         self.__search.bulk(body=data, request_timeout=ES.REQUEST_TIMEOUT)
 
     def delete_index_document(self, index_name: str, document_id: int) -> None:
         self.__search.delete(index=index_name, id=document_id)
+
+    def is_exists(self, index_name: str) -> bool:
+        return self.__search.indices.exists(index=index_name)

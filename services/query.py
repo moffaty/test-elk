@@ -1,5 +1,4 @@
 import uuid
-from uuid import UUID
 import json
 from typing import Union, Dict
 from faker import Faker
@@ -10,19 +9,20 @@ class RandomQuery:
     def __init__(self, mapping: dict[str, str]) -> None:
         self.__fake_generator = Faker(['ru_RU', 'en_US'])
         self.__mapping: dict[str, str] = mapping
+        self.id = 1
 
     def generate_value(self, field_type: str) -> Union[str, bool, int, None]:
         generation_methods = {
-            'id': self.generate_uuid,
+            'id': self.get_id,
             'text': self.generate_text,
             'boolean': self.__fake_generator.boolean,
             'int': self.generate_int,
         }
         return generation_methods.get(field_type, lambda: None)()
     
-    def generate_uuid(self) -> str:
-        return str(uuid.uuid4())
-    
+    def get_id(self) -> int:
+        return ++self.id
+
     def generate_int(self) -> str:
         return self.__fake_generator.random_int(min=0, max=100)
 
