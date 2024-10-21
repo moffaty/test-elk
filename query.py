@@ -1,5 +1,6 @@
 import uuid
 from uuid import UUID
+import json
 from typing import Union, Dict
 from faker import Faker
 from config import ES
@@ -29,8 +30,11 @@ class RandomQuery:
         russian_text = " ".join([self.__fake_generator.sentence() for _ in range(count_of_sentence)])
         return russian_text
     
-    def generate_document(self) -> Dict[str, Union[str, bool, int]]:
+    def generate_document(self, index_name: str) -> Dict[str, Union[str, bool, int]]:
         document = {}
         for field, field_type in self.__mapping.items():
             document[field] = self.generate_value(field_type)
-        return document
+        return [
+            {"index": {"_index": index_name}},  # Операция index
+            document  # Сам документ
+        ]
