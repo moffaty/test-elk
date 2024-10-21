@@ -46,9 +46,9 @@ class FileSystem:
                     if os.path.isfile(file_path):
                         os.remove(file_path)
                 except Exception as e:
-                    print(f"Ошибка при удалении файла {file_path}: {e}")
+                    print(f"Error in deleting file {file_path}: {e}")
             
             try:
                 os.rmdir(directory_path)
             except Exception as e:
-                print(f"Ошибка при удалении директории {directory_path}: {e}")
+                print(f"Error in deleting dir {directory_path}: {e}")
