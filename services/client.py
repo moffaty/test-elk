@@ -8,9 +8,9 @@ from services.files import FileSystem as fs
 from services.query import RandomQuery
 
 class Client:
-    map_instance = Mapping(params={'id': int, 'title': str, 'description': str, 'template': str, 'is_public': bool })
-    mapping = map_instance.generate_mapping()
     def __init__(self, url: str = ES.URL) -> None:
+        map_instance = Mapping(params={'id': int, 'title': str, 'description': str, 'template': str, 'is_public': bool })
+        mapping = map_instance.generate_mapping()
         self.es = Elasticsearch([url], verify_certs=False)
         self.loader = IndexLoader(self.es)
         self.query = RandomQuery(self.mapping)
@@ -39,6 +39,7 @@ class Client:
             raise ValueError("Missing 'id' in data")
 
         self.es.index(index=index_name, id=data['id'], body=data)
+        self.es.indices.refresh(index=index_name)
 
     def doc_count(self, index_name: Optional[str] = ES.INDEX.NAME) -> int:
         result = self.es.count(index=index_name)
@@ -47,9 +48,10 @@ class Client:
     def doc_delete_all(self, index_name: Optional[str] = ES.INDEX.NAME) -> int:
         result = self.es.delete_by_query(index=index_name, query={"match_all": {}})
         fs.delete_docs(index_name)
+        self.es.indices.refresh(index=index_name)
         return int(result['deleted'])
     
-    def search_simple(self, search_text: str, index_name: Optional[str] = ES.INDEX.NAME, fields: Optional[list] = ["title", "description", "template"]) -> list:
+    def search_simple(self, search_text: str, index_name: Optional[str] = ES.INDEX.NAME, fields: Optional[list] = ["title", "description", "template"]) -> list[dict[str, str]]:
         query = {
             "query": {
                 "multi_match": {

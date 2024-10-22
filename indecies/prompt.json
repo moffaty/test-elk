@@ -1,6 +1,6 @@
 {
     "settings": {
-        "refresh_interval": "1s",
+        "refresh_interval": "-1s",
         "max_ngram_diff": 4,
         "analysis": {
             "filter": {
